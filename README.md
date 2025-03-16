@@ -13,7 +13,7 @@ AudioSwitch is a Windows-only application that allows users to define and switch
 
 ## Installation
 
-1. Download the latest release from the [Releases](https://github.com/your-repo/audio-switch/releases) section.
+1. Download the latest release from the [Releases](https://github.com/FinalSh4re/AudioSwitch/releases/) section.
 2. Run `audio_switch_setup.exe` and choose to install.
 
 ## Usage
