@@ -1,9 +1,6 @@
-    _             _ _      ____          _ _       _
-   / \  _   _  __| (_) ___/ ___|_      _(_) |_ ___| |__
-  / _ \| | | |/ _` | |/ _ \___ \ \ /\ / / | __/ __| '_ \
- / ___ \ |_| | (_| | | (_) |__) \ V  V /| | || (__| | | |
-/_/   \_\__,_|\__,_|_|\___/____/ \_/\_/ |_|\__\___|_| |_|
+### AudioSwitch
 
+![Screenshot of the AudioSwitch setup menu.](./Screenshot.png)
 
 AudioSwitch is a Windows-only application that allows users to define and switch between audio profiles using customizable hotkeys. An audio profile consists of a combination of an audio input device (microphone) and an audio output device (speakers, headphones, etc.).
 
