@@ -1,0 +1,21 @@
+[package]
+name = "audio_switch_setup"
+version = "0.1.0"
+edition = "2024"
+build = "build.rs"
+
+[dependencies]
+anyhow = "1.0.97"
+confy = "0.6.1"
+directories = "6.0.0"
+inquire = "0.7.5"
+serde = { version = "1.0.219", features = ["derive"] }
+win-hotkey = "0.3.0"
+windows = { version = "0.52", features = ["Win32", "Win32_Devices", "Win32_System_Ole", "Win32_System_TaskScheduler", "Win32_Devices_FunctionDiscovery", "Win32_Media", "Win32_Media_Audio", "Win32_System", "Win32_System_Com", "Win32_System_Com_StructuredStorage", "Win32_System_Variant", "Win32_UI", "Win32_UI_Shell", "Win32_UI_Shell_PropertiesSystem", "Win32_Foundation"] }
+sysinfo = "0.33.1"
+self-replace = "1.5.0"
+
+audio_switch_service = { path = "../audio_switch_service", artifact = "bin", version = "0.1.0" }
+
+[build-dependencies]
+winres = "0.1.12"
