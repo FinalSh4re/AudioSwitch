@@ -141,7 +141,7 @@ pub fn delete_profile() -> Result<()> {
         );
 
         if Confirm::new(&format!(
-            "Do you want to delete profile {}?",
+            "Do you want to delete profile {}? (y/n)",
             profile_to_delete
         ))
         .prompt()?
