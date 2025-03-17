@@ -35,14 +35,14 @@ fn main_menu() -> Result<()> {
 
     loop {
         match Select::new("AudioSwitch Main Menu:", menu.iter().collect()).prompt() {
-            Ok(Menu::AddProfile) => { 
+            Ok(Menu::AddProfile) => {
                 profiles::new_profile()?;
                 restart_service()?;
-            },
+            }
             Ok(Menu::DeleteProfiles) => {
                 profiles::delete_profile()?;
                 restart_service()?;
-            } ,
+            }
             Ok(Menu::Install) => {
                 install_program()?;
             }
@@ -230,7 +230,6 @@ fn uninstall() -> Result<()> {
 }
 
 fn restart_service() -> Result<()> {
-
     let service_file_path = directories::BaseDirs::new()
         .unwrap()
         .data_local_dir()

@@ -1,4 +1,4 @@
-use std::io::Cursor;
+use std::{env::current_exe, io::Cursor, process::Command};
 
 use tray_icon::{
     TrayIcon, TrayIconBuilder, TrayIconEvent,
@@ -9,7 +9,7 @@ use winit::{application::ApplicationHandler, event_loop::EventLoop};
 #[derive(Debug)]
 enum UserEvent {
     TrayIconEvent,
-    MenuEvent,
+    MenuEvent(MenuEvent),
 }
 
 struct Application {
@@ -35,10 +35,17 @@ impl Application {
 
     fn new_tray_menu() -> Menu {
         let menu = Menu::new();
+        let setup_entry = MenuItem::new("Open Setup", true, None);
         let exit_entry = MenuItem::new("Quit", true, None);
+
+        if let Err(err) = menu.append(&setup_entry) {
+            println!("{err:?}");
+        }
+
         if let Err(err) = menu.append(&exit_entry) {
             println!("{err:?}");
         }
+
         menu
     }
 }
@@ -65,7 +72,18 @@ impl ApplicationHandler<UserEvent> for Application {
     }
     fn user_event(&mut self, event_loop: &winit::event_loop::ActiveEventLoop, event: UserEvent) {
         match event {
-            UserEvent::MenuEvent => event_loop.exit(),
+            UserEvent::MenuEvent(e) => {
+                let MenuEvent { id } = e;
+
+                if &id.0 == "1001" {
+                    if let Ok(mut exe) = current_exe() {
+                        exe.set_file_name("AudioSwitchSetup.exe");
+                        let _ = Command::new(exe).spawn();
+                    }
+                } else if &id.0 == "1002" {
+                    event_loop.exit();
+                }
+            }
             _ => {}
         }
     }
@@ -80,8 +98,8 @@ pub fn create_tray() {
         let _ = proxy.send_event(UserEvent::TrayIconEvent);
     }));
     let proxy = event_loop.create_proxy();
-    MenuEvent::set_event_handler(Some(move |_event| {
-        let _ = proxy.send_event(UserEvent::MenuEvent);
+    MenuEvent::set_event_handler(Some(move |event| {
+        let _ = proxy.send_event(UserEvent::MenuEvent(event));
     }));
 
     let mut app = Application::new();
