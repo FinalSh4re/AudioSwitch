@@ -111,14 +111,16 @@ fn install_program() -> Result<()> {
 
     println!("    Copied Program Files... Done ✔");
 
-    std::os::windows::fs::symlink_file(
-        &install_dir.join("AudioSwitchSetup.exe"),
-        directories::UserDirs::new()
-            .expect("Failed creating UserDir Instance.")
-            .desktop_dir()
-            .ok_or(anyhow!("Failed to get Desktop path."))?
-            .join("AudioSwitch.exe"),
-    )?;
+    if inquire::Confirm::new("Do you want to create a Desktop shortcut? (y/n)").prompt()? {
+        std::os::windows::fs::symlink_file(
+            &install_dir.join("AudioSwitchSetup.exe"),
+            directories::UserDirs::new()
+                .expect("Failed creating UserDir Instance.")
+                .desktop_dir()
+                .ok_or(anyhow!("Failed to get Desktop path."))?
+                .join("AudioSwitch.exe"),
+        )?;
+    }
 
     unsafe {
         CoInitializeEx(None, COINIT_MULTITHREADED)?;
