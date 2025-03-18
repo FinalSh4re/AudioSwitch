@@ -25,8 +25,7 @@ pub fn new_profile() -> Result<()> {
 
     let color_validator = |input: &str| {
         let hex_chars: [char; 16] = [
-        '0', '1', '2', '3', '4', '5', '6', '7',
-        '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
         ];
 
         if !input.starts_with("#") {
@@ -42,7 +41,8 @@ pub fn new_profile() -> Result<()> {
                 if !hex_chars.contains(&c) {
                     println!("{}", c);
                     return Ok(Validation::Invalid(
-                        "Invalid color code! Invalid Hex value, valid characters are: [0-9A-F]".into(),
+                        "Invalid color code! Invalid Hex value, valid characters are: [0-9A-F]"
+                            .into(),
                     ));
                 }
             }
@@ -57,7 +57,8 @@ pub fn new_profile() -> Result<()> {
         .prompt()
         .context("No profile name specified.")?;
 
-    let color = Text::new("Enter a hex color code (eg. #FFFFFF). The color is assigned to the tray icon when the profile is active.")
+    let color = Text::new("Enter a hex color code (eg. #FFFFFF).")
+        .with_help_message("The color is assigned to the tray icon when the profile is active.")
         .with_validator(color_validator)
         .prompt()
         .context("No color specified.")?;

@@ -17,13 +17,13 @@ pub enum UserEvent {
     ColorChange(HexColor),
 }
 
-struct Application {
+struct TrayApp {
     tray_icon: Option<TrayIcon>,
 }
 
-impl Application {
-    pub fn new() -> Application {
-        Application { tray_icon: None }
+impl TrayApp {
+    pub fn new() -> TrayApp {
+        TrayApp { tray_icon: None }
     }
 
     fn new_tray_icon() -> TrayIcon {
@@ -55,7 +55,7 @@ impl Application {
     }
 }
 
-impl ApplicationHandler<UserEvent> for Application {
+impl ApplicationHandler<UserEvent> for TrayApp {
     fn resumed(&mut self, _event_loop: &winit::event_loop::ActiveEventLoop) {}
 
     fn window_event(
@@ -114,7 +114,7 @@ pub fn create_tray(event_loop: EventLoop<UserEvent>) {
         let _ = proxy.send_event(UserEvent::MenuEvent(event));
     }));
 
-    let mut app = Application::new();
+    let mut app = TrayApp::new();
 
     let _menu_channel = MenuEvent::receiver();
     let _tray_channel = TrayIconEvent::receiver();

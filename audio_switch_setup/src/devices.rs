@@ -2,7 +2,8 @@ use anyhow::Result;
 
 use windows::Win32::Devices::FunctionDiscovery::PKEY_Device_FriendlyName;
 use windows::Win32::Media::Audio::{
-    DEVICE_STATE_ACTIVE, IMMDeviceEnumerator, MMDeviceEnumerator, eCapture, eRender,
+    DEVICE_STATE_ACTIVE, DEVICE_STATE_DISABLED, IMMDeviceEnumerator, MMDeviceEnumerator, eCapture,
+    eRender,
 };
 use windows::Win32::System::Com::{
     CLSCTX_ALL, COINIT_MULTITHREADED, CoCreateInstance, CoInitializeEx, CoUninitialize, STGM_READ,
@@ -47,7 +48,7 @@ pub fn enumerate_devices() -> Result<Vec<Device>> {
             CoCreateInstance(&MMDeviceEnumerator, None, CLSCTX_ALL)?;
 
         let output_device_collection =
-            enumerator.EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE)?;
+            enumerator.EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE | DEVICE_STATE_DISABLED)?;
 
         for i in 0..output_device_collection.GetCount()? {
             let raw_device = output_device_collection.Item(i)?;
@@ -65,7 +66,7 @@ pub fn enumerate_devices() -> Result<Vec<Device>> {
         }
 
         let input_device_collection =
-            enumerator.EnumAudioEndpoints(eCapture, DEVICE_STATE_ACTIVE)?;
+            enumerator.EnumAudioEndpoints(eCapture, DEVICE_STATE_ACTIVE | DEVICE_STATE_DISABLED)?;
 
         for i in 0..input_device_collection.GetCount()? {
             let raw_device = input_device_collection.Item(i)?;
