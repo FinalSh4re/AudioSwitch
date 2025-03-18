@@ -1,5 +1,4 @@
 use anyhow::{Context, Result};
-
 use inquire::validator::Validation;
 use inquire::{Confirm, Select, Text};
 use win_hotkey::keys::VirtualKey;
@@ -8,7 +7,7 @@ use crate::devices::{DeviceType, enumerate_devices};
 use crate::hotkeys::Hotkey;
 
 pub fn new_profile() -> Result<()> {
-    let validator = |input: &str| {
+    let profile_name_validator = |input: &str| {
         let config: crate::config::Config = confy::load("AudioSwitch", None)?;
 
         if config
@@ -24,12 +23,44 @@ pub fn new_profile() -> Result<()> {
         }
     };
 
+    let color_validator = |input: &str| {
+        let hex_chars: [char; 16] = [
+        '0', '1', '2', '3', '4', '5', '6', '7',
+        '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+        ];
+
+        if !input.starts_with("#") {
+            Ok(Validation::Invalid(
+                "Invalid color code! Hex code needs to start with a #.".into(),
+            ))
+        } else if input.len() != 7 {
+            Ok(Validation::Invalid(
+                "Invalid color code! Code needs to be 7 characters long.".into(),
+            ))
+        } else {
+            for c in input.trim_start_matches("#").to_ascii_lowercase().chars() {
+                if !hex_chars.contains(&c) {
+                    println!("{}", c);
+                    return Ok(Validation::Invalid(
+                        "Invalid color code! Invalid Hex value, valid characters are: [0-9A-F]".into(),
+                    ));
+                }
+            }
+            Ok(Validation::Valid)
+        }
+    };
+
     let available_devices = enumerate_devices()?;
 
     let profile_name = Text::new("Enter a name for the new profile:")
-        .with_validator(validator)
+        .with_validator(profile_name_validator)
         .prompt()
         .context("No profile name specified.")?;
+
+    let color = Text::new("Enter a hex color code (eg. #FFFFFF). The color is assigned to the tray icon when the profile is active.")
+        .with_validator(color_validator)
+        .prompt()
+        .context("No color specified.")?;
 
     let output_device = Select::new(
         "Select output device:",
@@ -109,7 +140,8 @@ pub fn new_profile() -> Result<()> {
         .set_hotkey(
             hotkey.modifier.map(|i| i.to_string()),
             hotkey.main_key.to_string(),
-        );
+        )
+        .set_profile_color(color);
 
     config.profiles.push(profile);
 

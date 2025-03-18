@@ -16,6 +16,7 @@ pub struct Profile {
     pub output_id: String,
     pub output_name: String,
     pub hotkey: HotkeyConfig,
+    pub color: Option<String>,
 }
 
 #[derive(Default, Clone, Debug, Serialize, Deserialize)]
@@ -45,5 +46,11 @@ impl std::fmt::Display for Profile {
             "Profile {}:\nInput Device: {}\nOutput Device: {}\nHotkey: {}\n",
             self.profile_name, self.input_name, self.output_name, self.hotkey
         )
+    }
+}
+
+impl Config {
+    pub fn len(&self) -> usize {
+        self.profiles.iter().count()
     }
 }

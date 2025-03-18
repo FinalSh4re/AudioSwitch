@@ -1,6 +1,7 @@
 #![windows_subsystem = "windows"]
 
 mod config;
+mod dyn_icon;
 mod tray;
 
 use anyhow::Result;
@@ -16,15 +17,27 @@ use windows::Win32::System::Com::{
     CLSCTX_ALL, COINIT_MULTITHREADED, CoCreateInstance, CoInitializeEx, CoUninitialize,
 };
 use windows::core::PCWSTR;
+use winit::event_loop::{EventLoop, EventLoopProxy};
+
+use tray::UserEvent;
 
 pub fn main() -> Result<()> {
-    setup_hotkey_handler();
-    tray::create_tray();
+    let cfg: config::Config = confy::load("AudioSwitch", None).expect("Failed to open config.");
+    let event_loop = EventLoop::<UserEvent>::with_user_event().build().unwrap();
+
+    let mut proxies = vec![];
+
+    for _ in 0..cfg.len() {
+        proxies.push(event_loop.create_proxy());
+    }
+
+    setup_hotkey_handler(proxies);
+    tray::create_tray(event_loop);
 
     Ok(())
 }
 
-fn setup_hotkey_handler() {
+fn setup_hotkey_handler(proxies: Vec<EventLoopProxy<UserEvent>>) {
     thread::spawn(|| {
         unsafe {
             CoInitializeEx(None, COINIT_MULTITHREADED).expect("Failed to initialize Thread.");
@@ -34,7 +47,7 @@ fn setup_hotkey_handler() {
             confy::load("AudioSwitch", None).expect("Failed to open config.");
         let mut hkm = HotkeyManager::new();
 
-        for p in config.profiles {
+        for (p, proxy) in config.profiles.into_iter().zip(proxies) {
             let vk = VirtualKey::from_keyname(
                 &p.hotkey
                     .hotkey
@@ -50,8 +63,8 @@ fn setup_hotkey_handler() {
             hkm.register(
                 vk,
                 vk_mod.as_ref().map(|v| v.as_slice()),
-                Some(
-                    move || match set_profile(p.input_id.clone(), p.output_id.clone()) {
+                Some(move || {
+                    match set_profile(p.input_id.clone(), p.output_id.clone()) {
                         Ok(_) => {
                             send_toast(format!("Activated Profile {}", p.profile_name.clone()))
                                 .expect("Failed to send notification.");
@@ -64,8 +77,11 @@ fn setup_hotkey_handler() {
                             ))
                             .expect("Failed to send notification.");
                         }
-                    },
-                ),
+                    }
+                    if let Some(color) = p.color.clone() {
+                        let _ = proxy.clone().send_event(UserEvent::ColorChange(color));
+                    }
+                }),
             )
             .expect("Failed to register hotkey.");
         }

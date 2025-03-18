@@ -16,6 +16,7 @@ pub struct Profile {
     pub output_id: String,
     pub output_name: String,
     pub hotkey: HotkeyConfig,
+    pub color: Option<String>,
 }
 
 #[derive(Default, Clone, Debug, Serialize, Deserialize)]
@@ -74,6 +75,11 @@ impl Profile {
     pub fn set_hotkey(mut self, modifier: Option<String>, hotkey: String) -> Self {
         self.hotkey.modifier = modifier;
         self.hotkey.hotkey = hotkey;
+        self
+    }
+
+    pub fn set_profile_color(mut self, color: String) -> Self {
+        self.color = Some(color);
         self
     }
 }

@@ -6,10 +6,15 @@ use tray_icon::{
 };
 use winit::{application::ApplicationHandler, event_loop::EventLoop};
 
+use crate::dyn_icon::{HexColor, generate_icon};
+
+pub const ICON: &[u8] = include_bytes!("../assets/app.png");
+
 #[derive(Debug)]
-enum UserEvent {
+pub enum UserEvent {
     TrayIconEvent,
     MenuEvent(MenuEvent),
+    ColorChange(HexColor),
 }
 
 struct Application {
@@ -17,7 +22,7 @@ struct Application {
 }
 
 impl Application {
-    fn new() -> Application {
+    pub fn new() -> Application {
         Application { tray_icon: None }
     }
 
@@ -70,6 +75,7 @@ impl ApplicationHandler<UserEvent> for Application {
             self.tray_icon = Some(Self::new_tray_icon());
         }
     }
+
     fn user_event(&mut self, event_loop: &winit::event_loop::ActiveEventLoop, event: UserEvent) {
         match event {
             UserEvent::MenuEvent(e) => {
@@ -84,14 +90,20 @@ impl ApplicationHandler<UserEvent> for Application {
                     event_loop.exit();
                 }
             }
+            UserEvent::ColorChange(color) => {
+                let icon = generate_icon(color).unwrap_or(load_icon());
+                self.tray_icon
+                    .as_mut()
+                    .unwrap()
+                    .set_icon(Some(icon))
+                    .expect("Failed to set tray icon.");
+            }
             _ => {}
         }
     }
 }
 
-pub fn create_tray() {
-    let event_loop = EventLoop::<UserEvent>::with_user_event().build().unwrap();
-
+pub fn create_tray(event_loop: EventLoop<UserEvent>) {
     // set a tray event handler that forwards the event and wakes up the event loop
     let proxy = event_loop.create_proxy();
     TrayIconEvent::set_event_handler(Some(move |_event| {
@@ -114,7 +126,7 @@ pub fn create_tray() {
 
 fn load_icon() -> tray_icon::Icon {
     let (icon_rgba, icon_width, icon_height) = {
-        let img_bytes = include_bytes!("../assets/app.png");
+        let img_bytes = ICON;
         let mut image = image::ImageReader::new(Cursor::new(img_bytes));
         image.set_format(image::ImageFormat::Png);
         let rgb_img = image.decode().expect("Failed to load image.").into_rgba8();
