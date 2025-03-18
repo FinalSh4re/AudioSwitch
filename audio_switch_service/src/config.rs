@@ -48,9 +48,3 @@ impl std::fmt::Display for Profile {
         )
     }
 }
-
-impl Config {
-    pub fn len(&self) -> usize {
-        self.profiles.iter().count()
-    }
-}

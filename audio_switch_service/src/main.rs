@@ -27,7 +27,7 @@ pub fn main() -> Result<()> {
 
     let mut proxies = vec![];
 
-    for _ in 0..cfg.len() {
+    for _ in 0..cfg.profiles.len() {
         proxies.push(event_loop.create_proxy());
     }
 
