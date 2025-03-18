@@ -68,6 +68,10 @@ fn setup_hotkey_handler(proxies: Vec<EventLoopProxy<UserEvent>>) {
                         Ok(_) => {
                             send_toast(format!("Activated Profile {}", p.profile_name.clone()))
                                 .expect("Failed to send notification.");
+                            
+                            if let Some(color) = p.color.clone() {
+                                let _ = proxy.clone().send_event(UserEvent::ColorChange(color));
+                            }
                         }
 
                         Err(_) => {
@@ -77,9 +81,6 @@ fn setup_hotkey_handler(proxies: Vec<EventLoopProxy<UserEvent>>) {
                             ))
                             .expect("Failed to send notification.");
                         }
-                    }
-                    if let Some(color) = p.color.clone() {
-                        let _ = proxy.clone().send_event(UserEvent::ColorChange(color));
                     }
                 }),
             )
