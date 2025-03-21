@@ -8,7 +8,7 @@ use crate::hotkeys::Hotkey;
 
 pub fn new_profile() -> Result<()> {
     let profile_name_validator = |input: &str| {
-        let config: crate::config::Config = confy::load("AudioSwitch", None)?;
+        let config: config::Config = confy::load("AudioSwitch", None)?;
 
         if config
             .profiles
@@ -83,7 +83,7 @@ pub fn new_profile() -> Result<()> {
     .prompt()
     .context("No input device selected")?;
 
-    let mut config: crate::config::Config = confy::load("AudioSwitch", None)?;
+    let mut config: config::Config = confy::load("AudioSwitch", None)?;
 
     #[allow(unused_assignments)]
     let mut hotkey = Hotkey {
@@ -133,7 +133,7 @@ pub fn new_profile() -> Result<()> {
         break;
     }
 
-    let profile = crate::config::Profile::default()
+    let profile = config::Profile::default()
         .set_profile_id(0)
         .set_profile_name(&profile_name)
         .set_input_device(&input_device.device_id, &input_device.name)
@@ -152,7 +152,7 @@ pub fn new_profile() -> Result<()> {
 }
 
 pub fn delete_profile() -> Result<()> {
-    let mut config: crate::config::Config = confy::load("AudioSwitch", None)?;
+    let mut config: config::Config = confy::load("AudioSwitch", None)?;
 
     let mut profiles = Vec::new();
 

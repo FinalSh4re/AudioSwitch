@@ -1,4 +1,3 @@
-mod config;
 mod devices;
 mod hotkeys;
 mod profiles;

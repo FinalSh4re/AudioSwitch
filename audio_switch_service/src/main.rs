@@ -1,6 +1,5 @@
 #![windows_subsystem = "windows"]
 
-mod config;
 mod dyn_icon;
 mod service;
 mod tray;

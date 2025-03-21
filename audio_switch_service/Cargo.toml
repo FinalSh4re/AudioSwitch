@@ -15,3 +15,5 @@ win-hotkey = "0.3.0"
 windows = { version = "0.52", features = ["Win32", "Win32_Devices", "Win32_System_Ole", "Win32_System_TaskScheduler", "Win32_Devices_FunctionDiscovery", "Win32_Media", "Win32_Media_Audio", "Win32_System", "Win32_System_Com", "Win32_System_Com_StructuredStorage", "Win32_System_Variant", "Win32_UI", "Win32_UI_Shell", "Win32_UI_Shell_PropertiesSystem"] }
 winit = "0.30.9"
 image = "0.25.5"
+
+config = { path = "../config" }

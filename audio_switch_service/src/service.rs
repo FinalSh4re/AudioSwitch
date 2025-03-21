@@ -1,5 +1,6 @@
-use crate::config::Config;
 use crate::tray::{UserEvent, create_tray};
+
+use config::Config;
 
 use anyhow::Result;
 use com_policy_config::{IPolicyConfig, PolicyConfigClient};

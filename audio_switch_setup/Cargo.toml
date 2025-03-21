@@ -15,6 +15,7 @@ windows = { version = "0.52", features = ["Win32", "Win32_Devices", "Win32_Syste
 sysinfo = "0.33.1"
 self-replace = "1.5.0"
 
+config = { path = "../config" }
 audio_switch_service = { path = "../audio_switch_service", artifact = "bin", version = "0.1.0" }
 
 [build-dependencies]
